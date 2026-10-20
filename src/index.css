@@ -1,0 +1,451 @@
+@import "tailwindcss";
+
+/* 仙气飘飘 · 深色夜空主题 token（黛青/月白/淡金/烟紫/玉色）—— 作为默认主题 */
+@theme {
+  --color-ink-950: #0a1420;
+  --color-ink-900: #0d1b2a;
+  --color-ink-800: #12243a;
+  --color-ink-700: #16283f;
+  --color-ink-600: #1e3450;
+  --color-line: #2a4258;
+  --color-moon: #e8e0d0;
+  --color-dim: #9fb0c0;
+  --color-gold: #c9a96a;
+  --color-gold-soft: #e0c58f;
+  --color-gold-bright: #f0d9a8;
+  --color-mist: #a89bd4;
+  --color-jade: #7fb0a8;
+  --font-kai: "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Noto Serif SC", serif;
+}
+
+/* 语义化「背景/琉璃」变量 —— 各主题只需覆盖下面这些变量即可整体换肤。
+   默认值即「仙气飘飘」现有的硬编码 rgba。 */
+:root {
+  color-scheme: dark;
+
+  /* 金色渐变发光文字的光晕 */
+  --glow: rgba(224, 197, 143, 0.4);
+
+  /* body 三团径向光晕 + 纵向渐变三段 */
+  --bg-glow-gold: rgba(240, 217, 168, 0.18);
+  --bg-glow-mist: rgba(168, 155, 212, 0.28);
+  --bg-glow-jade: rgba(127, 176, 168, 0.18);
+  --bg-linear-1: #08111c;
+  --bg-linear-2: #0d1b2a;
+  --bg-linear-3: #0a1624;
+
+  /* 神兽图腾（专属印记，淡印水印） */
+  --totem-image: url('/totems/xianhe.png');
+  --totem-pos: center 40%;
+  --totem-size: min(100vmin, 800px);
+
+  /* 星尘 / 飘雾 */
+  --stars-opacity: 0.55;
+  --mist-a: rgba(168, 155, 212, 0.22);
+  --mist-b: rgba(127, 176, 168, 0.2);
+  --mist-c: rgba(240, 217, 168, 0.14);
+
+  /* 琉璃面板 */
+  --glass-top: rgba(30, 52, 80, 0.5);
+  --glass-bottom: rgba(13, 27, 42, 0.62);
+  --glass-hi: rgba(255, 255, 255, 0.06);
+  --glass-shadow: rgba(0, 0, 0, 0.35);
+
+  /* 九宫格琉璃微光 */
+  --cell-top: rgba(30, 52, 80, 0.6);
+  --cell-bottom: rgba(13, 27, 42, 0.7);
+  --cell-hi: rgba(255, 255, 255, 0.08);
+  --cell-ring: rgba(201, 169, 106, 0.1);
+  --cell-inset-glow: rgba(168, 155, 212, 0.07);
+  --cell-outer-glow: rgba(168, 155, 212, 0.09);
+}
+
+html {
+  /* 兜底背景：与 body 渐变底部同色，避免滚动/超滚时露出非主题色底子（如浅色主题下的黑边） */
+  background: var(--bg-linear-3);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--color-moon);
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  /* 让负 z-index 的星尘/云雾叠在内容下方、背景上方 */
+  isolation: isolate;
+  /* 底色 + 淡金月华(左上) + 烟紫(右下) + 玉色(左下) */
+  background:
+    var(--totem-image) var(--totem-pos) / var(--totem-size) no-repeat,
+    radial-gradient(1100px 520px at 16% -8%, var(--bg-glow-gold), transparent 62%),
+    radial-gradient(1000px 620px at 88% 108%, var(--bg-glow-mist), transparent 62%),
+    radial-gradient(900px 600px at 4% 106%, var(--bg-glow-jade), transparent 60%),
+    linear-gradient(180deg, var(--bg-linear-1) 0%, var(--bg-linear-2) 42%, var(--bg-linear-3) 100%);
+  background-attachment: fixed;
+}
+
+/* 星尘：固定一层重复的细碎亮点，缓慢明灭 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 22% 28%, rgba(255, 255, 255, 0.9), transparent 60%),
+    radial-gradient(1.5px 1.5px at 68% 18%, rgba(255, 255, 255, 0.6), transparent 60%),
+    radial-gradient(1px 1px at 44% 66%, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 82% 52%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1px 1px at 12% 82%, rgba(255, 255, 255, 0.5), transparent 60%),
+    radial-gradient(1px 1px at 56% 40%, rgba(255, 255, 255, 0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 34% 8%, rgba(255, 255, 255, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 90% 86%, rgba(255, 255, 255, 0.5), transparent 60%);
+  background-repeat: repeat;
+  background-size: 440px 440px;
+  opacity: var(--stars-opacity);
+  animation: star-twinkle 7s ease-in-out infinite;
+}
+
+/* 飘雾：两团柔光缓慢漂移 */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -12%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(560px 340px at 70% 62%, var(--mist-a), transparent 70%),
+    radial-gradient(440px 300px at 24% 78%, var(--mist-b), transparent 70%),
+    radial-gradient(400px 280px at 52% 18%, var(--mist-c), transparent 70%);
+  filter: blur(50px);
+  animation: mist-drift 26s ease-in-out infinite alternate;
+}
+
+/* 底部 Tab 安全区 */
+.pb-safe {
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* 琉璃面板：通透磨砂 + 顶部高光 + 柔外发光（替代各卡片 bg-ink-*） */
+.glass-panel {
+  background: linear-gradient(180deg, var(--glass-top), var(--glass-bottom));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 var(--glass-hi),
+    0 10px 30px var(--glass-shadow);
+}
+
+/* 九宫格琉璃微光：淡金描边 + 内高光 + 柔光 */
+.glass-cell {
+  background: linear-gradient(165deg, var(--cell-top), var(--cell-bottom));
+  box-shadow:
+    inset 0 1px 0 var(--cell-hi),
+    inset 0 0 0 1px var(--cell-ring),
+    inset 0 0 24px var(--cell-inset-glow),
+    0 0 22px var(--cell-outer-glow);
+}
+
+/* 金色渐变发光文字（标题/强调） */
+.text-gold-glow {
+  background: linear-gradient(180deg, var(--color-gold-bright) 0%, var(--color-gold-soft) 45%, var(--color-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 10px var(--glow));
+}
+
+/* 底部 Tab 激活态高亮（跟随主题金色） */
+.tab-glow {
+  text-shadow: 0 0 10px color-mix(in srgb, var(--color-gold-soft) 55%, transparent);
+}
+.tab-dot {
+  box-shadow: 0 0 6px color-mix(in srgb, var(--color-gold-soft) 90%, transparent);
+}
+
+/* 轻微上下漂浮 */
+.float-slow {
+  animation: float-slow 4.5s ease-in-out infinite;
+}
+
+/* 居中装饰分隔（✦ + 左右渐变细线） */
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: color-mix(in srgb, var(--color-gold) 70%, transparent);
+}
+.ornament::before,
+.ornament::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-gold) 35%, transparent), transparent);
+}
+
+/* 值符/值使呼吸光晕（跟随主题金/玉色） */
+@keyframes breathe-gold {
+  0%,
+  100% {
+    box-shadow: 0 0 6px 0 color-mix(in srgb, var(--color-gold-soft) 25%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px color-mix(in srgb, var(--color-gold-soft) 50%, transparent);
+  }
+}
+.breathe-zf {
+  animation: breathe-gold 3s ease-in-out infinite;
+}
+
+@keyframes breathe-jade {
+  0%,
+  100% {
+    box-shadow: 0 0 6px 0 color-mix(in srgb, var(--color-jade) 25%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 18px 3px color-mix(in srgb, var(--color-jade) 50%, transparent);
+  }
+}
+.breathe-zs {
+  animation: breathe-jade 3s ease-in-out infinite;
+}
+
+/* 空亡虚线边框 */
+.kong-wang {
+  border-style: dashed;
+}
+
+/* 马星光点 */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+.twinkle {
+  animation: twinkle 1.6s ease-in-out infinite;
+}
+
+/* 星尘明灭 / 飘雾漂移 / 漂浮 */
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes mist-drift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1.04);
+  }
+  100% {
+    transform: translate3d(2%, 1%, 0) scale(1.12);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* 减少动效偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .breathe-zf,
+  .breathe-zs,
+  .twinkle,
+  .float-slow {
+    animation: none;
+  }
+  body::before,
+  body::after {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   主题覆盖：:root[data-theme='…'] 特异性高于 :root，覆盖 @theme 与
+   :root 里生成的变量，从而全局换肤（无需改动任何组件类名）。
+   ============================================================ */
+
+/* 玄墨金章 —— 墨黑 + 古金 + 微朱砂，道符古印 */
+:root[data-theme='mojin'] {
+  --color-ink-950: #060606;
+  --color-ink-900: #0c0b09;
+  --color-ink-800: #131211;
+  --color-ink-700: #1a1917;
+  --color-ink-600: #24221f;
+  --color-line: #3a352a;
+  --color-moon: #e9e2d0;
+  --color-dim: #8d8674;
+  --color-gold: #c7a252;
+  --color-gold-soft: #dcc083;
+  --color-gold-bright: #f0d8a2;
+  --color-mist: #9a8fa8;
+  --color-jade: #8aa89b;
+
+  --glow: rgba(199, 162, 82, 0.35);
+  --bg-glow-gold: rgba(199, 162, 82, 0.3);
+  --bg-glow-mist: rgba(154, 143, 168, 0.18);
+  --bg-glow-jade: rgba(138, 168, 155, 0.12);
+  --bg-linear-1: #050505;
+  --bg-linear-2: #0c0b09;
+  --bg-linear-3: #070606;
+  --totem-image: url('/totems/xuanwu.png');
+  --stars-opacity: 0.4;
+  --mist-a: rgba(199, 162, 82, 0.28);
+  --mist-b: rgba(138, 168, 155, 0.12);
+  --mist-c: rgba(154, 143, 168, 0.12);
+  --glass-top: rgba(36, 34, 31, 0.5);
+  --glass-bottom: rgba(12, 11, 9, 0.62);
+  --glass-hi: rgba(255, 255, 255, 0.05);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --cell-top: rgba(36, 34, 31, 0.6);
+  --cell-bottom: rgba(12, 11, 9, 0.7);
+  --cell-hi: rgba(255, 255, 255, 0.07);
+  --cell-ring: rgba(199, 162, 82, 0.14);
+  --cell-inset-glow: rgba(199, 162, 82, 0.06);
+  --cell-outer-glow: rgba(199, 162, 82, 0.08);
+}
+
+/* 朱砂赤金 —— 深红黑 + 亮金 + 朱红，传统热烈 */
+:root[data-theme='zhusha'] {
+  --color-ink-950: #1c0b0e;
+  --color-ink-900: #260f13;
+  --color-ink-800: #301418;
+  --color-ink-700: #3a181e;
+  --color-ink-600: #462129;
+  --color-line: #5c3036;
+  --color-moon: #f3e6d8;
+  --color-dim: #c0a096;
+  --color-gold: #e0a94e;
+  --color-gold-soft: #eec87f;
+  --color-gold-bright: #ffdd9e;
+  --color-mist: #d98a6b;
+  --color-jade: #8fb8a0;
+
+  --glow: rgba(224, 169, 78, 0.4);
+  --bg-glow-gold: rgba(224, 169, 78, 0.2);
+  --bg-glow-mist: rgba(217, 138, 107, 0.36);
+  --bg-glow-jade: rgba(143, 184, 160, 0.1);
+  --bg-linear-1: #180a0d;
+  --bg-linear-2: #260f13;
+  --bg-linear-3: #1a0b0e;
+  --totem-image: url('/totems/zhuque.png');
+  --stars-opacity: 0.5;
+  --mist-a: rgba(217, 138, 107, 0.32);
+  --mist-b: rgba(224, 169, 78, 0.18);
+  --mist-c: rgba(143, 184, 160, 0.1);
+  --glass-top: rgba(70, 33, 41, 0.5);
+  --glass-bottom: rgba(38, 15, 19, 0.62);
+  --glass-hi: rgba(255, 255, 255, 0.06);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --cell-top: rgba(70, 33, 41, 0.6);
+  --cell-bottom: rgba(38, 15, 19, 0.7);
+  --cell-hi: rgba(255, 255, 255, 0.08);
+  --cell-ring: rgba(224, 169, 78, 0.15);
+  --cell-inset-glow: rgba(217, 138, 107, 0.07);
+  --cell-outer-glow: rgba(224, 169, 78, 0.09);
+}
+
+/* 青瓷翡翠 —— 青绿 + 玉色 + 淡金，清新明亮 */
+:root[data-theme='qingci'] {
+  --color-ink-950: #0a1f1c;
+  --color-ink-900: #0e2824;
+  --color-ink-800: #12352e;
+  --color-ink-700: #164038;
+  --color-ink-600: #1d4f45;
+  --color-line: #2f6a5e;
+  --color-moon: #e6f0ea;
+  --color-dim: #a4c4ba;
+  --color-gold: #c9b06a;
+  --color-gold-soft: #ddc98b;
+  --color-gold-bright: #efe0ac;
+  --color-mist: #8fb5c9;
+  --color-jade: #6fd0bd;
+
+  --glow: rgba(221, 201, 139, 0.4);
+  --bg-glow-gold: rgba(201, 176, 106, 0.14);
+  --bg-glow-mist: rgba(143, 181, 201, 0.14);
+  --bg-glow-jade: rgba(111, 208, 189, 0.32);
+  --bg-linear-1: #081713;
+  --bg-linear-2: #0e2824;
+  --bg-linear-3: #0a1a16;
+  --totem-image: url('/totems/qinglong.png');
+  --stars-opacity: 0.5;
+  --mist-a: rgba(143, 181, 201, 0.15);
+  --mist-b: rgba(111, 208, 189, 0.3);
+  --mist-c: rgba(201, 176, 106, 0.12);
+  --glass-top: rgba(29, 79, 69, 0.5);
+  --glass-bottom: rgba(14, 40, 36, 0.62);
+  --glass-hi: rgba(255, 255, 255, 0.07);
+  --glass-shadow: rgba(0, 0, 0, 0.35);
+  --cell-top: rgba(29, 79, 69, 0.6);
+  --cell-bottom: rgba(14, 40, 36, 0.7);
+  --cell-hi: rgba(255, 255, 255, 0.09);
+  --cell-ring: rgba(111, 208, 189, 0.12);
+  --cell-inset-glow: rgba(111, 208, 189, 0.07);
+  --cell-outer-glow: rgba(143, 181, 201, 0.09);
+}
+
+/* 宣纸素笺 —— 浅色宣纸 + 墨字 + 朱砂，古书卷（浅色主题） */
+:root[data-theme='xuanzhi'] {
+  color-scheme: light;
+
+  --color-ink-950: #f2ecd9;
+  --color-ink-900: #f6f0e0;
+  --color-ink-800: #efe7d0;
+  --color-ink-700: #e7dcc0;
+  --color-ink-600: #dccfae;
+  --color-line: #c9b994;
+  --color-moon: #3a3226;
+  --color-dim: #7d7158;
+  --color-gold: #a97e32;
+  --color-gold-soft: #8a6a2f;
+  --color-gold-bright: #b98f3f;
+  --color-mist: #8a6a8f;
+  --color-jade: #3f7a68;
+
+  --glow: rgba(138, 106, 47, 0.25);
+  --bg-glow-gold: rgba(169, 126, 50, 0.22);
+  --bg-glow-mist: rgba(138, 106, 143, 0.16);
+  --bg-glow-jade: rgba(63, 122, 104, 0.12);
+  --bg-linear-1: #f7f2e4;
+  --bg-linear-2: #f2ecd9;
+  --bg-linear-3: #ece4cd;
+  --totem-image: url('/totems/qilin.png');
+  --stars-opacity: 0;
+  --mist-a: rgba(138, 106, 143, 0.16);
+  --mist-b: rgba(63, 122, 104, 0.1);
+  --mist-c: rgba(169, 126, 50, 0.1);
+  --glass-top: rgba(255, 252, 244, 0.72);
+  --glass-bottom: rgba(239, 231, 208, 0.7);
+  --glass-hi: rgba(255, 255, 255, 0.6);
+  --glass-shadow: rgba(120, 100, 60, 0.16);
+  --cell-top: rgba(255, 252, 244, 0.8);
+  --cell-bottom: rgba(239, 231, 208, 0.75);
+  --cell-hi: rgba(255, 255, 255, 0.7);
+  --cell-ring: rgba(169, 126, 50, 0.22);
+  --cell-inset-glow: rgba(138, 106, 143, 0.05);
+  --cell-outer-glow: rgba(120, 100, 60, 0.08);
+}
+

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <style>html{background:#0a1420}</style>
+    <script>
+      // 首屏前应用已保存的主题，避免默认主题闪烁
+      try {
+        var _t = localStorage.getItem('feipan-theme');
+        if (_t) document.documentElement.dataset.theme = _t;
+      } catch (e) {}
+    </script>
+    <meta name="theme-color" content="#0d1b2a" />
+    <meta name="description" content="飞盘奇门遁甲排盘 · 手机优先 · 可离线" />
+    <!-- iOS 添加到主屏幕 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="飞盘奇门" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <title>飞盘奇门排盘</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
